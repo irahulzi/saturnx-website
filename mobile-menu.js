@@ -1,6 +1,7 @@
 // Mobile Menu Toggle
 document.addEventListener('DOMContentLoaded', function() {
   // Create mobile menu elements if they don't exist
+  const headerRow = document.querySelector('.header-row');
   const nav = document.querySelector('.nav');
   
   // Check if mobile menu toggle already exists
@@ -11,8 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
     menuToggle.setAttribute('aria-label', 'Toggle mobile menu');
     menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
     
-    // Insert the button after the nav
-    nav.parentNode.insertBefore(menuToggle, nav.nextSibling);
+    // Insert the button at the end of header-row
+    headerRow.appendChild(menuToggle);
   }
   
   // Check if mobile menu overlay already exists
