@@ -311,7 +311,7 @@
     font-size: 0.98rem;
   }
   .ultra-premium-contact-illustration {
-    max-width: 160px;
+    display: none;
   }
   .ultra-premium-badge {
     font-size: 0.85rem;
