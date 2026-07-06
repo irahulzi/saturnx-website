@@ -1,0 +1,20 @@
+[build]
+  command = "npm install"
+  publish = "."
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "20"
+
+[functions]
+  node_bundler = "esbuild"
+
+[[redirects]]
+  from = "/api/satx-ai"
+  to = "/.netlify/functions/satx-ai"
+  status = 200
+
+[[redirects]]
+  from = "/satx-ai"
+  to = "/satx-ai.html"
+  status = 200

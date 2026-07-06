@@ -1,0 +1,331 @@
+@import "tailwindcss";
+
+/* SATX AI — Next.js page enhancements (extends style.css) */
+.satx-ai-logo-wrap {
+  margin: 0 0 20px;
+  line-height: 0;
+}
+
+.satx-ai-logo {
+  display: block;
+  height: clamp(52px, 8vw, 80px);
+  width: auto;
+  max-width: min(100%, 360px);
+}
+
+.satx-ai-logo--sm {
+  height: 30px;
+  max-width: none;
+}
+
+.satx-chat-panel__title .satx-ai-logo--sm {
+  flex-shrink: 0;
+}
+
+.satx-ai-page__subtitle {
+  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
+  font-weight: 700;
+  color: #ffe066;
+  max-width: 760px;
+  margin-bottom: 14px !important;
+}
+
+.satx-ai-page__desc {
+  margin: 0;
+  max-width: 760px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.satx-ai-section {
+  padding-top: 0;
+  padding-bottom: 72px;
+}
+
+.satx-fade-in {
+  animation: satxFadeIn 0.7s ease-out both;
+}
+
+.satx-fade-in--delay-1 {
+  animation-delay: 0.08s;
+}
+
+.satx-fade-in--delay-2 {
+  animation-delay: 0.16s;
+}
+
+.satx-fade-in--delay-3 {
+  animation-delay: 0.24s;
+}
+
+@keyframes satxFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.satx-chat-panel {
+  max-width: 920px;
+  margin: 0 auto;
+  background: linear-gradient(
+    145deg,
+    rgba(12, 16, 24, 0.72),
+    rgba(8, 10, 16, 0.82)
+  );
+  backdrop-filter: blur(24px) saturate(160%);
+  -webkit-backdrop-filter: blur(24px) saturate(160%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 22px;
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 0 1px rgba(241, 90, 36, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.satx-chat-panel__header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 24px 24px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(90deg, rgba(241, 90, 36, 0.1), transparent 65%);
+}
+
+.satx-chat-panel__title {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.satx-chat-panel__title i {
+  color: var(--accent);
+}
+
+.satx-chat-panel__subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+.satx-chat-panel__badge {
+  flex-shrink: 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 224, 102, 0.35);
+  color: #ffe066;
+  background: rgba(255, 224, 102, 0.08);
+}
+
+.satx-chat-panel__messages {
+  height: min(58vh, 500px);
+  overflow-y: auto;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.satx-chat-bubble {
+  max-width: 85%;
+  padding: 14px 16px;
+  border-radius: 18px;
+  line-height: 1.55;
+  font-size: 0.98rem;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.satx-chat-bubble--user {
+  margin-left: auto;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #fff;
+  border-bottom-right-radius: 6px;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+}
+
+.satx-chat-bubble--assistant {
+  margin-right: auto;
+  background: rgba(255, 255, 255, 0.07);
+  color: rgba(255, 255, 255, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom-left-radius: 6px;
+}
+
+.satx-chat-bubble--loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0.85;
+  font-style: italic;
+}
+
+.satx-message-in {
+  animation: satxMessageIn 0.35s ease-out both;
+}
+
+@keyframes satxMessageIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.satx-typing {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.satx-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.55);
+  animation: satxTyping 1.2s infinite ease-in-out;
+}
+
+.satx-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.satx-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes satxTyping {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.7);
+    opacity: 0.45;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.satx-chat-panel__prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0 24px 16px;
+}
+
+.satx-prompt-chip {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+  border-radius: 999px;
+  padding: 8px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease,
+    background 0.2s ease,
+    transform 0.2s ease;
+}
+
+.satx-prompt-chip:hover:not(:disabled) {
+  border-color: rgba(241, 90, 36, 0.45);
+  color: #fff;
+  background: rgba(241, 90, 36, 0.1);
+  transform: translateY(-1px);
+}
+
+.satx-prompt-chip:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.satx-chat-panel__composer {
+  display: flex;
+  gap: 12px;
+  padding: 18px 24px 24px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.satx-chat-panel__input {
+  flex: 1;
+  min-width: 0;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.satx-chat-panel__input::placeholder {
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.satx-chat-panel__input:focus {
+  border-color: rgba(241, 90, 36, 0.55);
+  box-shadow: 0 0 0 3px rgba(241, 90, 36, 0.12);
+}
+
+.satx-chat-panel__send {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+  padding-inline: 22px;
+}
+
+.satx-chat-panel__send:disabled,
+.satx-chat-panel__input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .satx-chat-panel__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .satx-chat-panel__messages {
+    height: 52vh;
+    padding: 16px;
+  }
+
+  .satx-chat-panel__prompts,
+  .satx-chat-panel__composer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .satx-chat-panel__composer {
+    flex-direction: column;
+  }
+
+  .satx-chat-panel__send {
+    justify-content: center;
+    width: 100%;
+  }
+}
