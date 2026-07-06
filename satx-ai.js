@@ -1,6 +1,5 @@
 (function () {
   var appEl = document.getElementById("satx-app");
-  var welcomeEl = document.getElementById("satx-welcome");
   var messagesEl = document.getElementById("satx-messages");
   var scrollEl = document.getElementById("satx-scroll");
   var inputEl = document.getElementById("satx-input");
@@ -14,9 +13,14 @@
   var STARTER_PROMPTS = [
     { label: "Cisco 48-port switch", text: "Cisco 48-port PoE switch" },
     { label: "Draft an RFQ", text: "Help me draft an RFQ for structured cabling in Dammam" },
-    { label: "10kVA UPS sizing", text: "10kVA UPS for server room" },
-    { label: "Hotel CCTV system", text: "Hotel CCTV system requirements" },
+    { label: "10kVA UPS", text: "10kVA UPS for server room" },
+    { label: "Hotel CCTV", text: "Hotel CCTV system requirements" },
   ];
+
+  function updateLogoState() {
+    var hasText = inputEl.value.trim().length > 0;
+    appEl.classList.toggle("satx-app--typing", hasText);
+  }
 
   function scrollToBottom() {
     if (scrollEl) {
@@ -26,22 +30,17 @@
 
   function updateSendButton() {
     sendBtn.disabled = !inputEl.value.trim() || sendBtn.dataset.loading === "true";
+    updateLogoState();
   }
 
   function enterChatMode() {
-    if (!appEl.classList.contains("satx-app--chatting")) {
-      appEl.classList.add("satx-app--chatting");
-      messagesEl.hidden = false;
-      if (welcomeEl) welcomeEl.hidden = true;
-    }
+    appEl.classList.add("satx-app--chatting");
   }
 
   function exitChatMode() {
     messages = [];
-    appEl.classList.remove("satx-app--chatting");
-    messagesEl.hidden = true;
+    appEl.classList.remove("satx-app--chatting", "satx-app--typing", "satx-app--focused");
     messagesEl.innerHTML = "";
-    if (welcomeEl) welcomeEl.hidden = false;
     inputEl.value = "";
     updateSendButton();
     inputEl.focus();
@@ -51,21 +50,10 @@
     messagesEl.innerHTML = "";
 
     messages.forEach(function (msg) {
-      var row = document.createElement("div");
-      row.className = "satx-message satx-message--" + msg.role;
-
-      var avatar = document.createElement("div");
-      avatar.className = "satx-message__avatar";
-      avatar.textContent = msg.role === "user" ? "You" : "AI";
-      avatar.setAttribute("aria-hidden", "true");
-
-      var body = document.createElement("div");
-      body.className = "satx-message__body";
-      body.textContent = msg.content;
-
-      row.appendChild(avatar);
-      row.appendChild(body);
-      messagesEl.appendChild(row);
+      var bubble = document.createElement("div");
+      bubble.className = "satx-message satx-message--" + msg.role;
+      bubble.textContent = msg.content;
+      messagesEl.appendChild(bubble);
     });
 
     scrollToBottom();
@@ -81,9 +69,7 @@
         var loading = document.createElement("div");
         loading.id = "satx-loading";
         loading.className = "satx-message satx-message--assistant satx-message--loading";
-        loading.innerHTML =
-          '<div class="satx-message__avatar" aria-hidden="true">AI</div>' +
-          '<div class="satx-message__body">SATX AI is thinking...</div>';
+        loading.textContent = "SATX AI is thinking...";
         messagesEl.appendChild(loading);
         scrollToBottom();
       }
@@ -142,6 +128,16 @@
 
   inputEl.addEventListener("input", updateSendButton);
 
+  inputEl.addEventListener("focus", function () {
+    appEl.classList.add("satx-app--focused");
+  });
+
+  inputEl.addEventListener("blur", function () {
+    if (!inputEl.value.trim()) {
+      appEl.classList.remove("satx-app--focused");
+    }
+  });
+
   inputEl.addEventListener("keydown", function (event) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
@@ -164,24 +160,19 @@
 
   document.querySelectorAll("[data-satx-prompt]").forEach(function (btn) {
     btn.addEventListener("click", function () {
-      var prompt = btn.getAttribute("data-satx-prompt");
       closeSidebar();
-      sendMessage(prompt);
+      sendMessage(btn.getAttribute("data-satx-prompt"));
     });
   });
 
-  var newChatBtns = [
-    document.getElementById("satx-new-chat"),
-    document.getElementById("satx-new-chat-top"),
-  ];
-  newChatBtns.forEach(function (btn) {
-    if (btn) btn.addEventListener("click", exitChatMode);
-  });
+  [document.getElementById("satx-new-chat"), document.getElementById("satx-new-chat-top")].forEach(
+    function (btn) {
+      if (btn) btn.addEventListener("click", exitChatMode);
+    }
+  );
 
   var sidebar = document.getElementById("satx-sidebar");
   var overlay = document.getElementById("satx-sidebar-overlay");
-  var openBtn = document.getElementById("satx-sidebar-open");
-  var closeBtn = document.getElementById("satx-sidebar-close");
 
   function openSidebar() {
     if (sidebar) sidebar.classList.add("is-open");
@@ -195,10 +186,11 @@
     document.body.style.overflow = "";
   }
 
+  var openBtn = document.getElementById("satx-sidebar-open");
+  var closeBtn = document.getElementById("satx-sidebar-close");
   if (openBtn) openBtn.addEventListener("click", openSidebar);
   if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
   if (overlay) overlay.addEventListener("click", closeSidebar);
 
   updateSendButton();
-  inputEl.focus();
 })();

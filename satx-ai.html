@@ -3,17 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
-  <meta name="theme-color" content="#212121" />
+  <meta name="theme-color" content="#04060c" />
   <title>SATX AI - Saturnx</title>
-  <meta name="description" content="SATX AI — SaturnX engineering and procurement assistant for IT, ELV, CCTV, industrial materials, RFQs and quotations." />
+  <meta name="description" content="SATX AI — Premium engineering and procurement intelligence by SaturnX." />
   <meta property="og:title" content="Saturnx — SATX AI" />
   <meta property="og:description" content="From search to quotation in seconds with SATX AI." />
   <meta property="og:type" content="website" />
   <meta property="og:image" content="satx-ai-logo.png" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Saturnx — SATX AI" />
-  <meta name="twitter:description" content="AI engineering and procurement assistant." />
-  <meta name="twitter:image" content="satx-ai-logo.png" />
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="satx-ai.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
@@ -26,8 +22,14 @@
     gtag('config', 'G-W7QYB9BR2G');
   </script>
 </head>
-<body id="top" class="satx-gpt-page">
-  <header class="site-header satx-gpt-header">
+<body id="top" class="satx-premium-page">
+  <div class="satx-ambient" aria-hidden="true">
+    <div class="satx-ambient__gradient"></div>
+    <div class="satx-ambient__orb"></div>
+    <div class="satx-ambient__grid"></div>
+  </div>
+
+  <header class="site-header satx-premium-header">
     <div class="container header-row">
       <a class="brand" href="index.html" aria-label="Saturnx Home">
         <img class="brand-logo" src="logo.png" alt="Saturnx logo" />
@@ -45,21 +47,22 @@
   </header>
 
   <main class="satx-app" id="satx-app" aria-label="SATX AI">
+    <div class="satx-hero-logo" id="satx-hero-logo" aria-hidden="true">
+      <div class="satx-hero-logo__halo"></div>
+      <div class="satx-hero-logo__ring"></div>
+      <img src="satx-ai-logo.png" alt="" class="satx-hero-logo__img" width="320" height="80" />
+      <p class="satx-hero-logo__caption">Engineering &amp; Procurement Intelligence</p>
+    </div>
+
     <div class="satx-sidebar-overlay" id="satx-sidebar-overlay" aria-hidden="true"></div>
 
-    <aside class="satx-sidebar" id="satx-sidebar" aria-label="SATX sidebar">
-      <div class="satx-sidebar__head">
-        <img src="satx-ai-logo.png" alt="" class="satx-sidebar__logo" width="120" height="30" />
-        <button type="button" class="satx-sidebar__close" id="satx-sidebar-close" aria-label="Close sidebar">
-          <i class="fas fa-times" aria-hidden="true"></i>
-        </button>
-      </div>
-
-      <button type="button" class="satx-sidebar__new" id="satx-new-chat">
-        <i class="fas fa-plus" aria-hidden="true"></i>
-        New chat
+    <aside class="satx-sidebar" id="satx-sidebar" aria-label="Domains">
+      <button type="button" class="satx-sidebar__close" id="satx-sidebar-close" aria-label="Close menu">
+        <i class="fas fa-times" aria-hidden="true"></i>
       </button>
-
+      <button type="button" class="satx-sidebar__new" id="satx-new-chat">
+        <i class="fas fa-plus" aria-hidden="true"></i> New session
+      </button>
       <p class="satx-sidebar__label">Domains</p>
       <nav class="satx-sidebar__nav">
         <button type="button" class="satx-sidebar__item" data-satx-prompt="Cisco 48 Port PoE Switch">
@@ -81,72 +84,44 @@
           <i class="fas fa-fire-extinguisher" aria-hidden="true"></i> Fire &amp; Safety
         </button>
       </nav>
-
-      <div class="satx-sidebar__rfq">
-        <p class="satx-sidebar__label">RFQ note</p>
-        <p>Share quantity, specification, brand, and delivery location in Saudi Arabia for a quotation draft.</p>
-      </div>
     </aside>
 
-    <section class="satx-app__main">
-      <header class="satx-topbar">
-        <button type="button" class="satx-topbar__menu" id="satx-sidebar-open" aria-label="Open sidebar">
-          <i class="fas fa-bars" aria-hidden="true"></i>
+    <section class="satx-stage">
+      <header class="satx-stage__bar">
+        <button type="button" class="satx-stage__icon" id="satx-sidebar-open" aria-label="Open domains">
+          <i class="fas fa-layer-group" aria-hidden="true"></i>
         </button>
-        <div class="satx-topbar__title">
-          <img src="satx-ai-logo.png" alt="SATX AI" class="satx-topbar__logo" width="100" height="26" />
-        </div>
-        <button type="button" class="satx-topbar__new" id="satx-new-chat-top" aria-label="New chat">
-          <i class="fas fa-pen-to-square" aria-hidden="true"></i>
+        <span class="satx-stage__status"><span class="satx-stage__dot"></span> Online</span>
+        <button type="button" class="satx-stage__icon" id="satx-new-chat-top" aria-label="New session">
+          <i class="fas fa-rotate-left" aria-hidden="true"></i>
         </button>
       </header>
 
-      <div class="satx-app__scroll" id="satx-scroll">
-        <div class="satx-welcome" id="satx-welcome">
-          <h1 class="satx-welcome__title">What can I help you procure?</h1>
-          <p class="satx-welcome__sub">
-            IT, electrical, industrial, ELV, CCTV &amp; more — specs and RFQs only. No invented prices.
-          </p>
-        </div>
-
-        <div class="satx-thread" id="satx-messages" aria-live="polite" aria-label="Chat messages" hidden></div>
+      <div class="satx-stage__scroll" id="satx-scroll">
+        <div class="satx-thread" id="satx-messages" aria-live="polite" aria-label="Chat messages"></div>
       </div>
 
-      <div class="satx-composer-area" id="satx-composer-area">
+      <div class="satx-dock" id="satx-dock">
         <div class="satx-chips" id="satx-prompts" aria-label="Suggested prompts"></div>
-
         <div class="satx-composer">
-          <div class="satx-composer__box">
+          <div class="satx-composer__glass">
             <input
               id="satx-input"
               class="satx-composer__input"
               type="text"
-              placeholder="Ask anything about materials, specs, or quotations..."
+              placeholder="Ask SATX AI about materials, specs, or quotations..."
               autocomplete="off"
               aria-label="Message SATX AI"
             />
-            <button id="satx-send" class="satx-composer__send" type="button" aria-label="Send message" disabled>
+            <button id="satx-send" class="satx-composer__send" type="button" aria-label="Send" disabled>
               <i class="fas fa-arrow-up" aria-hidden="true"></i>
             </button>
           </div>
         </div>
-
-        <p class="satx-composer__note">
-          SATX AI assists with procurement specs and RFQs. Official pricing from SaturnX sales only.
-        </p>
+        <p class="satx-dock__note">Specs &amp; RFQs only · Official pricing from SaturnX sales</p>
       </div>
     </section>
   </main>
-
-  <footer class="footer satx-gpt-footer" aria-label="Footer">
-    <div class="container footer-bottom">
-      © 2025 Saturnx · <a href="itservices.html#contact">Contact</a> · <a href="index.html">Home</a>
-    </div>
-  </footer>
-
-  <a href="https://wa.me/966532025666?text=Hello%2C%20I%20would%20like%20to%20know%20more%20about%20your%20services" class="whatsapp-float satx-gpt-whatsapp" target="_blank" rel="noopener" aria-label="Chat on WhatsApp">
-    <i class="fab fa-whatsapp"></i>
-  </a>
 
   <script src="mobile-menu.js"></script>
   <script src="satx-ai.js"></script>
