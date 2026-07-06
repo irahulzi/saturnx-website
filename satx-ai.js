@@ -1,88 +1,126 @@
 (function () {
-  const messagesEl = document.getElementById("satx-messages");
-  const inputEl = document.getElementById("satx-input");
-  const sendBtn = document.getElementById("satx-send");
-  const promptsEl = document.getElementById("satx-prompts");
+  var appEl = document.getElementById("satx-app");
+  var welcomeEl = document.getElementById("satx-welcome");
+  var messagesEl = document.getElementById("satx-messages");
+  var scrollEl = document.getElementById("satx-scroll");
+  var inputEl = document.getElementById("satx-input");
+  var sendBtn = document.getElementById("satx-send");
+  var promptsEl = document.getElementById("satx-prompts");
 
-  if (!messagesEl || !inputEl || !sendBtn) return;
+  if (!appEl || !messagesEl || !inputEl || !sendBtn) return;
 
-  const messages = [
-    {
-      role: "assistant",
-      content:
-        "Welcome to SATX AI. Tell me what material or solution you need — IT, electrical, industrial, ELV, CCTV, UPS, networking or engineering. I can help with specs and RFQs, but I do not provide prices.",
-    },
-  ];
+  var messages = [];
 
-  const STARTER_PROMPTS = [
-    "2 inch SS ball valve 2000 LBS",
-    "Cisco 48-port PoE switch",
-    "10kVA UPS for server room",
-    "CAT6A cable for office cabling",
+  var STARTER_PROMPTS = [
+    { label: "Cisco 48-port switch", text: "Cisco 48-port PoE switch" },
+    { label: "Draft an RFQ", text: "Help me draft an RFQ for structured cabling in Dammam" },
+    { label: "10kVA UPS sizing", text: "10kVA UPS for server room" },
+    { label: "Hotel CCTV system", text: "Hotel CCTV system requirements" },
   ];
 
   function scrollToBottom() {
-    messagesEl.scrollTop = messagesEl.scrollHeight;
+    if (scrollEl) {
+      scrollEl.scrollTop = scrollEl.scrollHeight;
+    }
+  }
+
+  function updateSendButton() {
+    sendBtn.disabled = !inputEl.value.trim() || sendBtn.dataset.loading === "true";
+  }
+
+  function enterChatMode() {
+    if (!appEl.classList.contains("satx-app--chatting")) {
+      appEl.classList.add("satx-app--chatting");
+      messagesEl.hidden = false;
+      if (welcomeEl) welcomeEl.hidden = true;
+    }
+  }
+
+  function exitChatMode() {
+    messages = [];
+    appEl.classList.remove("satx-app--chatting");
+    messagesEl.hidden = true;
+    messagesEl.innerHTML = "";
+    if (welcomeEl) welcomeEl.hidden = false;
+    inputEl.value = "";
+    updateSendButton();
+    inputEl.focus();
   }
 
   function renderMessages() {
     messagesEl.innerHTML = "";
 
     messages.forEach(function (msg) {
-      const bubble = document.createElement("div");
-      bubble.className =
-        "satx-message " +
-        (msg.role === "user" ? "satx-message--user" : "satx-message--assistant");
-      bubble.textContent = msg.content;
-      messagesEl.appendChild(bubble);
+      var row = document.createElement("div");
+      row.className = "satx-message satx-message--" + msg.role;
+
+      var avatar = document.createElement("div");
+      avatar.className = "satx-message__avatar";
+      avatar.textContent = msg.role === "user" ? "You" : "AI";
+      avatar.setAttribute("aria-hidden", "true");
+
+      var body = document.createElement("div");
+      body.className = "satx-message__body";
+      body.textContent = msg.content;
+
+      row.appendChild(avatar);
+      row.appendChild(body);
+      messagesEl.appendChild(row);
     });
 
     scrollToBottom();
   }
 
   function setLoading(isLoading) {
-    sendBtn.disabled = isLoading;
+    sendBtn.dataset.loading = isLoading ? "true" : "false";
     inputEl.disabled = isLoading;
 
-    const existing = document.getElementById("satx-loading");
+    var existing = document.getElementById("satx-loading");
     if (isLoading) {
       if (!existing) {
-        const loading = document.createElement("div");
+        var loading = document.createElement("div");
         loading.id = "satx-loading";
         loading.className = "satx-message satx-message--assistant satx-message--loading";
-        loading.textContent = "SATX AI is thinking...";
+        loading.innerHTML =
+          '<div class="satx-message__avatar" aria-hidden="true">AI</div>' +
+          '<div class="satx-message__body">SATX AI is thinking...</div>';
         messagesEl.appendChild(loading);
         scrollToBottom();
       }
     } else if (existing) {
       existing.remove();
     }
+
+    updateSendButton();
   }
 
   async function sendMessage(text) {
-    const content = (text || inputEl.value).trim();
-    if (!content || sendBtn.disabled) return;
+    var content = (text || inputEl.value).trim();
+    if (!content || sendBtn.dataset.loading === "true") return;
 
-    const userMessage = { role: "user", content: content };
-    messages.push(userMessage);
+    enterChatMode();
+
+    messages.push({ role: "user", content: content });
     inputEl.value = "";
+    updateSendButton();
     renderMessages();
     setLoading(true);
 
     try {
-      const res = await fetch("/api/satx-ai", {
+      var res = await fetch("/api/satx-ai", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ messages: messages }),
       });
 
-      const data = await res.json();
-
+      var data = await res.json();
       var reply = data.reply;
+
       if (!reply && data.error === "OPENAI_API_KEY is not configured.") {
         reply =
-          "SATX AI is not connected yet. The site owner must add OPENAI_API_KEY in Netlify → Site configuration → Environment variables (scope: Functions), then trigger a new deploy. GitHub and local .env files do not apply to the live site.";
+          "SATX AI is not connected yet. Add OPENAI_API_KEY in Netlify environment variables, then redeploy.";
       }
+
       messages.push({
         role: "assistant",
         content: reply || data.error || "Sorry, I could not process this request.",
@@ -102,68 +140,65 @@
     sendMessage();
   });
 
+  inputEl.addEventListener("input", updateSendButton);
+
   inputEl.addEventListener("keydown", function (event) {
     if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
-      sendMessage();
+      if (!sendBtn.disabled) sendMessage();
     }
   });
 
   if (promptsEl) {
-    STARTER_PROMPTS.forEach(function (prompt) {
-      const btn = document.createElement("button");
+    STARTER_PROMPTS.forEach(function (item) {
+      var btn = document.createElement("button");
       btn.type = "button";
-      btn.className = "satx-prompt-btn";
-      btn.textContent = prompt;
+      btn.className = "satx-chip";
+      btn.textContent = item.label;
       btn.addEventListener("click", function () {
-        sendMessage(prompt);
+        sendMessage(item.text);
       });
       promptsEl.appendChild(btn);
     });
   }
 
-  renderMessages();
-})();
-
-(function () {
-  var workspace = document.querySelector(".satx-command-workspace__inner");
-  var tabButtons = document.querySelectorAll(".satx-mobile-tabs__btn");
-  if (!workspace || !tabButtons.length) return;
-
-  function setPanel(panel) {
-    workspace.classList.remove(
-      "satx-panel-active-chat",
-      "satx-panel-active-domains",
-      "satx-panel-active-rfq"
-    );
-    workspace.classList.add("satx-panel-active-" + panel);
-    workspace.setAttribute("data-satx-active-panel", panel);
-
-    tabButtons.forEach(function (btn) {
-      var isActive = btn.getAttribute("data-satx-panel") === panel;
-      btn.classList.toggle("is-active", isActive);
-      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+  document.querySelectorAll("[data-satx-prompt]").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var prompt = btn.getAttribute("data-satx-prompt");
+      closeSidebar();
+      sendMessage(prompt);
     });
+  });
 
-    if (panel === "chat") {
-      var messagesEl = document.getElementById("satx-messages");
-      if (messagesEl) {
-        messagesEl.scrollTop = messagesEl.scrollHeight;
-      }
-    }
+  var newChatBtns = [
+    document.getElementById("satx-new-chat"),
+    document.getElementById("satx-new-chat-top"),
+  ];
+  newChatBtns.forEach(function (btn) {
+    if (btn) btn.addEventListener("click", exitChatMode);
+  });
+
+  var sidebar = document.getElementById("satx-sidebar");
+  var overlay = document.getElementById("satx-sidebar-overlay");
+  var openBtn = document.getElementById("satx-sidebar-open");
+  var closeBtn = document.getElementById("satx-sidebar-close");
+
+  function openSidebar() {
+    if (sidebar) sidebar.classList.add("is-open");
+    if (overlay) overlay.classList.add("is-open");
+    document.body.style.overflow = "hidden";
   }
 
-  tabButtons.forEach(function (btn) {
-    btn.addEventListener("click", function () {
-      setPanel(btn.getAttribute("data-satx-panel"));
-    });
-  });
+  function closeSidebar() {
+    if (sidebar) sidebar.classList.remove("is-open");
+    if (overlay) overlay.classList.remove("is-open");
+    document.body.style.overflow = "";
+  }
 
-  document.querySelectorAll(".satx-category-card").forEach(function (card) {
-    card.addEventListener("click", function () {
-      if (window.matchMedia("(max-width: 768px)").matches) {
-        setPanel("chat");
-      }
-    });
-  });
+  if (openBtn) openBtn.addEventListener("click", openSidebar);
+  if (closeBtn) closeBtn.addEventListener("click", closeSidebar);
+  if (overlay) overlay.addEventListener("click", closeSidebar);
+
+  updateSendButton();
+  inputEl.focus();
 })();
