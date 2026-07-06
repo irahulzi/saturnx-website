@@ -37,7 +37,8 @@ exports.handler = async function (event) {
   }
 
   try {
-    if (!process.env.OPENAI_API_KEY) {
+    const apiKey = (process.env.OPENAI_API_KEY || "").trim();
+    if (!apiKey) {
       return {
         statusCode: 500,
         headers: corsHeaders,
@@ -55,7 +56,7 @@ exports.handler = async function (event) {
       };
     }
 
-    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    const openai = new OpenAI({ apiKey });
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -80,10 +81,25 @@ exports.handler = async function (event) {
     };
   } catch (error) {
     console.error("SATX AI error:", error);
+
+    let message = "Failed to process your request.";
+    const status = error?.status;
+    const code = error?.code || error?.error?.code;
+
+    if (status === 401) {
+      message =
+        "OpenAI rejected the API key. In Netlify, check OPENAI_API_KEY has no extra spaces and create a new key at platform.openai.com/api-keys if needed.";
+    } else if (status === 429) {
+      message = "OpenAI rate limit reached. Please try again in a minute.";
+    } else if (code === "insufficient_quota" || status === 402) {
+      message =
+        "OpenAI billing is not set up. Add a payment method at platform.openai.com/settings/billing.";
+    }
+
     return {
       statusCode: 500,
       headers: corsHeaders,
-      body: JSON.stringify({ error: "Failed to process your request." }),
+      body: JSON.stringify({ error: message }),
     };
   }
 };

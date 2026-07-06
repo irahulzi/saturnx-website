@@ -78,9 +78,14 @@
 
       const data = await res.json();
 
+      var reply = data.reply;
+      if (!reply && data.error === "OPENAI_API_KEY is not configured.") {
+        reply =
+          "SATX AI is not connected yet. The site owner must add OPENAI_API_KEY in Netlify → Site configuration → Environment variables (scope: Functions), then trigger a new deploy. GitHub and local .env files do not apply to the live site.";
+      }
       messages.push({
         role: "assistant",
-        content: data.reply || data.error || "Sorry, I could not process this request.",
+        content: reply || data.error || "Sorry, I could not process this request.",
       });
     } catch (error) {
       messages.push({
@@ -118,4 +123,47 @@
   }
 
   renderMessages();
+})();
+
+(function () {
+  var workspace = document.querySelector(".satx-command-workspace__inner");
+  var tabButtons = document.querySelectorAll(".satx-mobile-tabs__btn");
+  if (!workspace || !tabButtons.length) return;
+
+  function setPanel(panel) {
+    workspace.classList.remove(
+      "satx-panel-active-chat",
+      "satx-panel-active-domains",
+      "satx-panel-active-rfq"
+    );
+    workspace.classList.add("satx-panel-active-" + panel);
+    workspace.setAttribute("data-satx-active-panel", panel);
+
+    tabButtons.forEach(function (btn) {
+      var isActive = btn.getAttribute("data-satx-panel") === panel;
+      btn.classList.toggle("is-active", isActive);
+      btn.setAttribute("aria-selected", isActive ? "true" : "false");
+    });
+
+    if (panel === "chat") {
+      var messagesEl = document.getElementById("satx-messages");
+      if (messagesEl) {
+        messagesEl.scrollTop = messagesEl.scrollHeight;
+      }
+    }
+  }
+
+  tabButtons.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      setPanel(btn.getAttribute("data-satx-panel"));
+    });
+  });
+
+  document.querySelectorAll(".satx-category-card").forEach(function (card) {
+    card.addEventListener("click", function () {
+      if (window.matchMedia("(max-width: 768px)").matches) {
+        setPanel("chat");
+      }
+    });
+  });
 })();

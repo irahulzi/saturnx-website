@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <meta name="theme-color" content="#030508" />
   <title>SATX AI - Saturnx</title>
   <meta name="description" content="SATX AI — SaturnX engineering and procurement command center for IT, ELV, CCTV, industrial materials, RFQs and quotations." />
   <meta property="og:title" content="Saturnx — SATX AI" />
@@ -102,7 +103,22 @@
           </span>
         </div>
 
-        <div class="satx-command-workspace__inner">
+        <nav class="satx-mobile-tabs" aria-label="SATX mobile sections" role="tablist">
+          <button type="button" class="satx-mobile-tabs__btn is-active" role="tab" aria-selected="true" data-satx-panel="chat" id="satx-tab-chat">
+            <i class="fas fa-comments" aria-hidden="true"></i>
+            Chat
+          </button>
+          <button type="button" class="satx-mobile-tabs__btn" role="tab" aria-selected="false" data-satx-panel="domains" id="satx-tab-domains">
+            <i class="fas fa-th-large" aria-hidden="true"></i>
+            Domains
+          </button>
+          <button type="button" class="satx-mobile-tabs__btn" role="tab" aria-selected="false" data-satx-panel="rfq" id="satx-tab-rfq">
+            <i class="fas fa-file-lines" aria-hidden="true"></i>
+            RFQ
+          </button>
+        </nav>
+
+        <div class="satx-command-workspace__inner satx-panel-active-chat" data-satx-active-panel="chat">
         <aside class="satx-command-categories" aria-label="Categories">
           <p class="satx-panel-label">Domains</p>
           <button type="button" class="satx-category-card" onclick="document.getElementById('satx-input').value='Cisco 48 Port PoE Switch'; document.getElementById('satx-input').focus();">
